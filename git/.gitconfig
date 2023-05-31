@@ -1,0 +1,9 @@
+[pull]
+	ff = only
+[core]
+	autocrlf = input
+	ignoreCase = false
+
+[user]
+	name = Bulat Kurbangaliev
+	email = 8617623+ilov3@users.noreply.github.com
