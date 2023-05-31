@@ -104,6 +104,8 @@ fi
 # install and set default python using pyenv
 if [ ! -d "$HOME/.pyenv/versions/$PYTHON_VERSION" ]; then
   pyenv install $PYTHON_VERSION
+  pyenv install 3.7
+  pyenv install 3.8
   pyenv global $PYTHON_VERSION
 fi
 
