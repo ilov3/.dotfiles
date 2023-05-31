@@ -1,3 +1,6 @@
+# As of now direnv doesn't allow specify per dir aliases/functions, this file and its content workarounds that limitation.
+# Picked up from https://github.com/direnv/direnv/issues/73
+
 # woot() {
 #   echo woot
 # }
