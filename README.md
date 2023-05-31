@@ -1,3 +1,11 @@
-### Personal Linux based dev env bootstrap scripts
+## Personal Linux based dev env bootstrap scripts
 
 Uses GNU [stow](https://www.gnu.org/software/stow/) to manage dotfiles
+
+### Usage
+
+```shell
+cd ~
+git clone git@github.com:ilov3/.dotfiles.git
+.dotfiles/install.sh
+```
