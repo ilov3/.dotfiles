@@ -12,7 +12,7 @@ force_stow() {
 }
 
 # install system deps and tools
-sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf
+sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf || true
 sudo apt update
 sudo NEEDRESTART_MODE=a DEBIAN_FRONTEND=noninteractive apt -y install build-essential libssl-dev zlib1g-dev \
   libbz2-dev libreadline-dev libsqlite3-dev ca-certificates curl gnupg python3-venv python3-pip \
@@ -120,7 +120,7 @@ PIPX_PACKAGES="pipenv glances ipython python-dotenv tldr argcomplete"
 for pkg in $PIPX_PACKAGES; do
   pipx install "$pkg"
 done
-sudo $(which activate-global-python-argcomplete)
+sudo $(which activate-global-python-argcomplete) || true
 
 # setup tpm
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
