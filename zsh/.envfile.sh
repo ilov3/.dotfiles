@@ -2,9 +2,9 @@ NPROC=$(nproc --all)
 RAM=$(LANG=C free -m|awk '/^Mem:/{print $2}')
 MINIKUBE_RAM=$(($RAM-1536))
 MINIKUBE_CPU=$(($NPROC-1))
-export LC_ALL=en_US.UTF-8
-export LC_TIME=en_GB.UTF-8
-export LANG=en_US.UTF-8
+#export LC_ALL=en_US.UTF-8
+#export LC_TIME=en_GB.UTF-8
+#export LANG=en_US.UTF-8
 
 export DEV_PROJ_DIR="$HOME/dev/"
 alias zc="nano ~/.zshrc"
@@ -36,3 +36,5 @@ timez() {
 
 alias tlc="tmux source ~/.tmux.conf"
 alias tec="nano ~/.tmux.conf"
+export MANGOHUD=1
+export MANGOHUD_CONFIGFILE=~/.config/MangoHud/MangoHud.conf
