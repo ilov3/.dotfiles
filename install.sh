@@ -116,7 +116,7 @@ if [ ! -d "$HOME/.local/pipx" ]; then
 fi
 
 # install python global tools
-PIPX_PACKAGES="pipenv glances ipython python-dotenv tldr argcomplete"
+PIPX_PACKAGES="pipenv glances ipython python-dotenv tldr argcomplete poetry pgcli httpie"
 for pkg in $PIPX_PACKAGES; do
   pipx install "$pkg"
 done

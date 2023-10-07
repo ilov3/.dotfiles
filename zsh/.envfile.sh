@@ -38,3 +38,6 @@ alias tlc="tmux source ~/.tmux.conf"
 alias tec="nano ~/.tmux.conf"
 export MANGOHUD=1
 export MANGOHUD_CONFIGFILE=~/.config/MangoHud/MangoHud.conf
+alias wgup="sudo systemctl start wg-quick@wg0"
+alias wgdn="sudo systemctl stop wg-quick@wg0"
+alias myip="curl ipv4.icanhazip.com"
