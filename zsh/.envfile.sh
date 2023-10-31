@@ -1,5 +1,13 @@
-NPROC=$(nproc --all)
-RAM=$(LANG=C free -m|awk '/^Mem:/{print $2}')
+if ! command -v nproc &> /dev/null 
+  then NPROC=$(sysctl -n hw.physicalcpu)
+  else NPROC=$(nproc --all)
+fi
+
+if ! command -v free &> /dev/null
+  then RAM=$(($(LANG=C sysctl hw.memsize | awk '/^hw.memsize:/{print $2}') / 2**20))
+  else RAM=$(LANG=C free -m | awk '/^Mem:/{print $2}')
+fi
+
 MINIKUBE_RAM=$(($RAM-1536))
 MINIKUBE_CPU=$(($NPROC-1))
 #export LC_ALL=en_US.UTF-8
