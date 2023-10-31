@@ -26,8 +26,8 @@ elif [ "$unameOut" == "Darwin" ]; then
     if ! command -v brew &>/dev/null; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
-    brew install xz stats tmux stow fzfneofetch direnv
-    brew install htop ||
+    brew install xz stats tmux stow fzf neofetch direnv
+    brew install htop || true
 else
     echo "Unknown OS: ${unameOut}"
     exit 1
