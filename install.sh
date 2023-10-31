@@ -23,8 +23,11 @@ if [ "$unameOut" == "Linux" ]; then
       libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
       git zsh tmux stow htop tree net-tools fzf neofetch gitsome direnv
 elif [ "$unameOut" == "Darwin" ]; then
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    brew install stats tmux stow fzf htop net-tools neofetch direnv gitsome
+    if ! command -v brew &>/dev/null; then
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    brew install xz stats tmux stow fzfneofetch direnv
+    brew install htop ||
 else
     echo "Unknown OS: ${unameOut}"
     exit 1
