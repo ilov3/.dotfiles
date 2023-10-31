@@ -11,27 +11,42 @@ force_stow() {
   cd -
 }
 
-# install system deps and tools
-sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf || true
-sudo apt update
-sudo NEEDRESTART_MODE=a DEBIAN_FRONTEND=noninteractive apt -y install build-essential libssl-dev zlib1g-dev \
-  libbz2-dev libreadline-dev libsqlite3-dev ca-certificates curl gnupg python3-venv python3-pip \
-  libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
-  git zsh tmux stow htop tree net-tools fzf neofetch gitsome direnv
+# Linux or Darwin
+unameOut="$(uname -s)"
+
+if [ "$unameOut" == "Linux" ]; then
+    # install system deps and tools
+    sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf || true
+    sudo apt update
+    sudo NEEDRESTART_MODE=a DEBIAN_FRONTEND=noninteractive apt -y install build-essential libssl-dev zlib1g-dev \
+      libbz2-dev libreadline-dev libsqlite3-dev ca-certificates curl gnupg python3-venv python3-pip \
+      libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
+      git zsh tmux stow htop tree net-tools fzf neofetch gitsome direnv
+elif [ "$unameOut" == "Darwin" ]; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    brew install stats tmux stow fzf htop net-tools neofetch direnv gitsome
+else
+    echo "Unknown OS: ${unameOut}"
+    exit 1
+fi
 
 if ! command -v docker &>/dev/null; then
-  echo ">>> Installing docker..."
-  sudo install -m 0755 -d /etc/apt/keyrings
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --batch --yes --dearmor -o /etc/apt/keyrings/docker.gpg
-  sudo chmod a+r /etc/apt/keyrings/docker.gpg
-  echo \
-    "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" |
-    sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
-  sudo apt update
-  sudo NEEDRESTART_MODE=a DEBIAN_FRONTEND=noninteractive apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-  sudo usermod -aG docker $USER
-  echo "Docker installation complete"
+  if [ "$unameOut" == "Linux" ]; then
+    echo ">>> Installing docker..."
+    sudo install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --batch --yes --dearmor -o /etc/apt/keyrings/docker.gpg
+    sudo chmod a+r /etc/apt/keyrings/docker.gpg
+    echo \
+      "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+    "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" |
+      sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+    sudo apt update
+    sudo NEEDRESTART_MODE=a DEBIAN_FRONTEND=noninteractive apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo usermod -aG docker $USER
+    echo "Docker installation complete"
+  else
+    brew install --cask docker
+  fi
 fi
 
 if ! command -v helm &>/dev/null; then
@@ -44,12 +59,19 @@ if ! command -v k9s &>/dev/null; then
   echo ">>> Installing k9s..."
   if [[ $(arch) == "aarch64" ]]; then
     curl -LO https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_arm64.tar.gz
+    tar xzvf k9s_Linux_arm64.tar.gz
   fi
 
   if [[ $(arch) == "x86_64" ]]; then
     curl -LO https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_amd64.tar.gz
+    tar xzvf k9s_Linux_amd64.tar.gz
   fi
-  tar xzvf k9s_Linux_arm64.tar.gz
+
+  if [[ $(arch) == "i386" ]]; then
+    curl -LO https://github.com/derailed/k9s/releases/latest/download/k9s_Darwin_amd64.tar.gz
+    tar xzvf k9s_Darwin_amd64.tar.gz
+  fi
+
   sudo mv k9s /usr/local/bin
   echo "K9s installation complete"
 fi
@@ -65,6 +87,11 @@ if ! command -v minikube &>/dev/null; then
     curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
     sudo install minikube-linux-amd64 /usr/local/bin/minikube
   fi
+
+  if [[ $(arch) == "i386" ]]; then
+    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
+    sudo install minikube-darwin-amd64 /usr/local/bin/minikube
+  fi
   echo "Minikube installation complete"
 fi
 
@@ -76,6 +103,10 @@ if ! command -v kubectl &>/dev/null; then
 
   if [[ $(arch) == "x86_64" ]]; then
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  fi
+
+  if [[ $(arch) == "i386" ]]; then
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/darwin/amd64/kubectl"
   fi
   sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
   echo "Kubectl installation complete"
@@ -111,7 +142,12 @@ fi
 
 if [ ! -d "$HOME/.local/pipx" ]; then
   echo ">>> Installing pipx..."
-  pip install pipx
+  if [ "$unameOut" == "Linux" ]; then
+    pip install pipx
+  else
+    brew install pipx
+    pipx ensurepath
+  fi
   echo "Pipx installation complete"
 fi
 
