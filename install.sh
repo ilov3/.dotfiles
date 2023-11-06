@@ -3,18 +3,9 @@ set -e
 
 # vars
 PYTHON_VERSION="3.10.11"
+source ~/.dotenv/zsh/.util.sh
 
-force_stow() {
-  cd ~/.dotfiles
-  stow --adopt $1
-  git restore . || true
-  cd -
-}
-
-# Linux or Darwin
-unameOut="$(uname -s)"
-
-if [ "$unameOut" == "Linux" ]; then
+if is_linux; then
     # install system deps and tools
     sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf || true
     sudo apt update
@@ -22,19 +13,19 @@ if [ "$unameOut" == "Linux" ]; then
       libbz2-dev libreadline-dev libsqlite3-dev ca-certificates curl gnupg python3-venv python3-pip \
       libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
       git zsh tmux stow htop tree net-tools fzf neofetch gitsome direnv
-elif [ "$unameOut" == "Darwin" ]; then
+elif is_mac; then
     if ! command -v brew &>/dev/null; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
     brew install xz stats tmux stow fzf neofetch direnv
     brew install htop || true
 else
-    echo "Unknown OS: ${unameOut}"
+    echo "Unknown OS: $(uname -s)"
     exit 1
 fi
 
 if ! command -v docker &>/dev/null; then
-  if [ "$unameOut" == "Linux" ]; then
+  if is_linux; then
     echo ">>> Installing docker..."
     sudo install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --batch --yes --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -60,19 +51,24 @@ fi
 
 if ! command -v k9s &>/dev/null; then
   echo ">>> Installing k9s..."
-  if [[ $(arch) == "aarch64" ]]; then
+  if is_linux_arm; then
     curl -LO https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_arm64.tar.gz
     tar xzvf k9s_Linux_arm64.tar.gz
   fi
 
-  if [[ $(arch) == "x86_64" ]]; then
+  if is_linux_64; then
     curl -LO https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_amd64.tar.gz
     tar xzvf k9s_Linux_amd64.tar.gz
   fi
 
-  if [[ $(arch) == "i386" ]]; then
+  if is_mac_64; then
     curl -LO https://github.com/derailed/k9s/releases/latest/download/k9s_Darwin_amd64.tar.gz
     tar xzvf k9s_Darwin_amd64.tar.gz
+  fi
+
+  if is_mac_arm; then
+    curl -LO https://github.com/derailed/k9s/releases/latest/download/k9s_Darwin_arm64.tar.gz
+    tar xzvf k9s_Darwin_arm64.tar.gz
   fi
 
   sudo mv k9s /usr/local/bin
@@ -81,17 +77,17 @@ fi
 
 if ! command -v minikube &>/dev/null; then
   echo ">>> Installing minikube..."
-  if [[ $(arch) == "aarch64" ]]; then
+  if is_linux_arm; then
     curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-arm64
     sudo install minikube-linux-arm64 /usr/local/bin/minikube
   fi
 
-  if [[ $(arch) == "x86_64" ]]; then
+  if is_linux_64; then
     curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
     sudo install minikube-linux-amd64 /usr/local/bin/minikube
   fi
 
-  if [[ $(arch) == "i386" ]]; then
+  if is_mac_64; then
     curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
     sudo install minikube-darwin-amd64 /usr/local/bin/minikube
   fi
@@ -100,15 +96,15 @@ fi
 
 if ! command -v kubectl &>/dev/null; then
   echo ">>> Installing kubectl..."
-  if [[ $(arch) == "aarch64" ]]; then
+  if is_linux_arm; then
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
   fi
 
-  if [[ $(arch) == "x86_64" ]]; then
+  if is_linux_64; then
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
   fi
 
-  if [[ $(arch) == "i386" ]]; then
+  if is_mac_64; then
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/darwin/amd64/kubectl"
   fi
   sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
@@ -145,7 +141,7 @@ fi
 
 if [ ! -d "$HOME/.local/pipx" ]; then
   echo ">>> Installing pipx..."
-  if [ "$unameOut" == "Linux" ]; then
+  if is_linux; then
     pip install pipx
   else
     brew install pipx
