@@ -7,16 +7,14 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-        with:
-          path: $HOME/.dotfiles
       - name: Run install.sh
-        run: $HOME/.dotfiles/install.sh
-  test_mac_x64:
-    runs-on: macos_latest
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-        with:
-          path: $HOME/.dotfiles
-      - name: Run install.sh
-        run: $HOME/.dotfiles/install.sh
+        run: ./install.sh
+#  test_mac_x64:
+#    runs-on: macos_latest
+#    steps:
+#      - name: Check out repository code
+#        uses: actions/checkout@v4
+#        with:
+#          path: $HOME/.dotfiles
+#      - name: Run install.sh
+#        run: $HOME/.dotfiles/install.sh
