@@ -105,6 +105,7 @@ bashcompinit
 source ~/.toolsrc.sh
 source ~/.envfile.sh
 source ~/.completion.sh
+source ~/.hosts/$(hostname -s).sh
 
 # Created by `pipx` on 2023-05-26 14:07:11
 export PATH="$PATH:$HOME/.local/bin"
