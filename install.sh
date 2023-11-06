@@ -13,7 +13,7 @@ if is_linux; then
     sudo NEEDRESTART_MODE=a DEBIAN_FRONTEND=noninteractive apt -y install build-essential libssl-dev zlib1g-dev \
       libbz2-dev libreadline-dev libsqlite3-dev ca-certificates curl gnupg python3-venv python3-pip \
       libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
-      git zsh tmux stow htop tree net-tools fzf neofetch gitsome direnv
+      git zsh tmux stow htop tree net-tools fzf neofetch direnv
 elif is_mac; then
     if ! command -v brew &>/dev/null; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
