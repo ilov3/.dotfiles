@@ -3,7 +3,8 @@ set -e
 
 # vars
 PYTHON_VERSION="3.10.11"
-source ~/.dotenv/zsh/.util.sh
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "$SCRIPT_DIR/zsh/.util.sh"
 
 if is_linux; then
     # install system deps and tools
