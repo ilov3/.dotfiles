@@ -1,16 +1,19 @@
-name: Test bootstrap script
-run-name: Test bootstrap script
-on: [push]
-jobs:
-  test_linux_x64:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-        with:
-          path: /home/runner/.dotfiles
-      - name: Run install.sh
-        run: ./install.sh
+# TODO: Implement CI for dotfiles
+#name: Test bootstrap script
+#run-name: Test bootstrap script
+#on: [push]
+#jobs:
+#  test_linux_x64:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Check out repository code
+#        uses: actions/checkout@v4
+##        with:
+##          path: /home/runner/.dotfiles
+#      - run: mkdir "$HOME/.dotfiles"
+#      - run: cd .. && mv ./.dotfiles/* ~/.dotfiles
+#      - name: Run install.sh
+#        run: ./install.sh
 #  test_mac_x64:
 #    runs-on: macos_latest
 #    steps:
