@@ -1,0 +1,22 @@
+name: Test bootstrap script
+run-name: Test bootstrap script
+on: [push]
+jobs:
+  test_linux_x64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          path: $HOME/.dotfiles
+      - name: Run install.sh
+        run: $HOME/.dotfiles/install.sh
+  test_mac_x64:
+    runs-on: macos_latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          path: $HOME/.dotfiles
+      - name: Run install.sh
+        run: $HOME/.dotfiles/install.sh
