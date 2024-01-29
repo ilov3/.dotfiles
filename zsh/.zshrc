@@ -105,7 +105,7 @@ bashcompinit
 source ~/.toolsrc.sh
 source ~/.envfile.sh
 source ~/.completion.sh
-if test ~/.hosts/$(hostname -s).sh; then
+if [ -f ~/.hosts/$(hostname -s).sh ]; then
   source ~/.hosts/$(hostname -s).sh
 fi
 
