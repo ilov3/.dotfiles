@@ -8,7 +8,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="tjkirch_mod"
+ZSH_THEME="robbyrussell" # set by `omz`
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -52,7 +52,7 @@ ZSH_THEME="tjkirch_mod"
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
@@ -105,7 +105,14 @@ bashcompinit
 source ~/.toolsrc.sh
 source ~/.envfile.sh
 source ~/.completion.sh
-source ~/.hosts/$(hostname -s).sh
+if test ~/.hosts/$(hostname -s).sh; then
+  source ~/.hosts/$(hostname -s).sh
+fi
 
 # Created by `pipx` on 2023-05-26 14:07:11
 export PATH="$PATH:$HOME/.local/bin"
+#eval "$(starship init zsh)"
+
+autoload -Uz compinit
+zstyle ':completion:*' menu select
+fpath+=~/.zfunc
