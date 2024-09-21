@@ -6,7 +6,7 @@ PYTHON_VERSION="3.10.11"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 source "$SCRIPT_DIR/zsh/.util.sh"
 
-if is_linux; then
+if is_linux && is_ubuntu; then
     # install system deps and tools
     sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf || true
     sudo apt update
@@ -16,6 +16,9 @@ if is_linux; then
       git zsh tmux stow htop tree net-tools fzf neofetch direnv
     # install act (tool to test github actions locally)
     curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+elif is_linux && is_fedora; then
+    sudo dnf update -y
+    sudo dnf install -y git zsh tmux stow htop tree net-tools fzf neofetch direnv
 elif is_mac; then
     if ! command -v brew &>/dev/null; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -28,7 +31,7 @@ else
 fi
 
 if ! command -v docker &>/dev/null; then
-  if is_linux; then
+  if is_linux && is_ubuntu; then
     echo ">>> Installing docker..."
     sudo install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --batch --yes --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -40,10 +43,16 @@ if ! command -v docker &>/dev/null; then
     sudo apt update
     sudo NEEDRESTART_MODE=a DEBIAN_FRONTEND=noninteractive apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     sudo usermod -aG docker $USER
-    echo "Docker installation complete"
-  else
+  elif is_linux && is_fedora; then
+    sudo dnf -y install dnf-plugins-core
+    sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+    sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo usermod -aG docker $USER
+    sudo systemctl start docker
+  elif is_mac; then
     brew install --cask docker
   fi
+  echo "Docker installation complete"
 fi
 
 if ! command -v helm &>/dev/null; then
