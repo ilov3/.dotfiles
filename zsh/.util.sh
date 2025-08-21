@@ -27,10 +27,7 @@ is_ubuntu() {
 }
 
 is_mac() {
-  if [ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ];
-  then return 0
-  else return 1
-  fi
+    [[ "$OSTYPE" == "darwin"* ]]
 }
 
 is_linux_64() {
