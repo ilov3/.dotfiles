@@ -10,9 +10,11 @@ fi
 
 MINIKUBE_RAM=$(($RAM-1536))
 MINIKUBE_CPU=$(($NPROC-1))
-#export LC_ALL=en_US.UTF-8
-#export LC_TIME=en_GB.UTF-8
-#export LANG=en_US.UTF-8
+
+export LC_TIME=en_GB.UTF-8
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
 
 export DEV_PROJ_DIR="$HOME/dev/"
 alias zc="nano ~/.zshrc"
