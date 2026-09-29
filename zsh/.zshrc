@@ -70,7 +70,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(z git aws pyenv direnv fzf command-not-found zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(z git aws direnv fzf command-not-found zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -105,8 +105,8 @@ bashcompinit
 source ~/.toolsrc.sh
 source ~/.envfile.sh
 source ~/.completion.sh
-if [ -f ~/.hosts/$(hostname -s).sh ]; then
-  source ~/.hosts/$(hostname -s).sh
+if [ -f ~/.hosts/${HOST%%.*}.sh ]; then
+  source ~/.hosts/${HOST%%.*}.sh
 fi
 
 # Created by `pipx` on 2023-05-26 14:07:11
@@ -116,9 +116,3 @@ export PATH="$PATH:$HOME/.local/bin"
 autoload -Uz compinit
 zstyle ':completion:*' menu select
 fpath+=~/.zfunc
-
-if is_mac; then
-    export NVM_DIR="$HOME/.nvm"
-        [ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && . "$(brew --prefix)/opt/nvm/nvm.sh" # This loads nvm
-        [ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] && . "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" # This loads nvm bash_completion
-fi
